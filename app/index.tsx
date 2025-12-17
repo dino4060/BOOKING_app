@@ -1,6 +1,6 @@
 import HomePage from "./(tabs)/home";
 
-export default function Index() {
+const Index = () => {
   return (
     <HomePage/>
     // <View
@@ -14,3 +14,5 @@ export default function Index() {
     // </View>
   );
 }
+
+export default Index
