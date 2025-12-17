@@ -1,13 +1,13 @@
 import Colors from "@/constants/Colors"
 import { Room } from "@/interface/Room"
-import BottomSheet, {	
+import BottomSheet, {
 	BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet"
+import { router } from "expo-router"
 import React, { useMemo, useRef } from "react"
-import { View, Text } from "react-native"
+import { Text, TouchableOpacity, View } from "react-native"
+// import { TouchableOpacity } from "react-native-gesture-handler"
 import Listings from "./Listing"
-import { Link, router } from "expo-router"
-import { TouchableOpacity } from "react-native-gesture-handler"
 
 interface Props {
 	listing: Room[]

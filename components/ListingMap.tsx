@@ -8,10 +8,9 @@ import {
 	StyleSheet,
 	Text,
 	TextInput,
+	TouchableOpacity,
 	View
 } from "react-native"
-import MapView from "react-native-map-clustering"
-import { Marker, PROVIDER_GOOGLE } from "react-native-maps"
 
 interface Props {
 	listings: any[]
@@ -85,7 +84,7 @@ const ListingMap = ({ listings }: Props) => {
 
 	return (
 		<View style={styles.container}>
-			<MapView
+			{/* <MapView
 				ref={mapRef}
 				style={styles.map}
 				onLayout={onMapReady}
@@ -96,12 +95,12 @@ const ListingMap = ({ listings }: Props) => {
 				showsMyLocationButton
 				renderCluster={renderCluster}
 				initialRegion={INITIAL_REGION_VIETNAM}
-			>
-			{/* <View
+			> */}
+			<View
 				ref={mapRef}
 				style={styles.map}
 				onLayout={onMapReady}
-			> */}
+			>
 				{listings.map((x: Room, i: number) => {
 					return (
 						// <Marker
@@ -116,18 +115,19 @@ const ListingMap = ({ listings }: Props) => {
 						// 			: 0, // If longitude is null, default to 0
 						// 	}}
 						// >
-							<View
-							style={styles.marker}
-							 key={i}>
+							<TouchableOpacity
+								onPress={() => onMarkSelected(x)}
+								style={styles.marker}
+							 	key={i}>
 								<Text style={styles.markerText}>
 									₤{x.price}
 								</Text>
-							</View>
+							</TouchableOpacity>
 						// </Marker>
 					)
 				})}
-			{/* </View> */}
-			</MapView>
+			</View>
+			{/* </MapView> */}
 			<View style={styles.searchBox}>
 				<Ionicons
 					name='location-outline'

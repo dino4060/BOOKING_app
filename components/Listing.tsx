@@ -1,6 +1,8 @@
 import Colors from "@/constants/Colors"
 import { defaultStyles } from "@/constants/Style"
 import { Room } from "@/interface/Room"
+import { Wishlist } from "@/interface/Wishlist"
+import { WishlistHandle } from "@/utils/Function"
 import { Ionicons } from "@expo/vector-icons"
 import AntDesign from "@expo/vector-icons/AntDesign"
 import {
@@ -57,12 +59,12 @@ const Listings = ({ listings: items, category }: Props) => {
 			: "add"
 		if (checkType === "add") {
 			// call api add
-			// await WishlistHandle.addToWishList(room_id)
+			await WishlistHandle.addToWishList(room_id)
 			//remove list love
 			setListLove((pre: string[]) => [...pre, room_id])
 		} else {
 			// call api remove
-			// await WishlistHandle.removeFromWishList(room_id)
+			await WishlistHandle.removeFromWishList(room_id)
 			//reload list love
 			let newList = [...listLove]
 			newList = newList.filter((x: string) => x != room_id)
@@ -71,10 +73,10 @@ const Listings = ({ listings: items, category }: Props) => {
 	}
 
 	const handleWishlist = async () => {
-		// const res: Wishlist[] =
-		// 	await WishlistHandle.getWishList()
-		// const idList = res.map((x) => x.room._id)
-		// setListLove(idList)
+		const res: Wishlist[] =
+			await WishlistHandle.getWishList()
+		const idList = res.map((x) => x.room._id)
+		setListLove(idList)
 	}
 
 	const renderRow: ListRenderItem<Room> = ({ item }) => (
