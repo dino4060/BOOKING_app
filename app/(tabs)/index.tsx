@@ -17,23 +17,24 @@ const HomePage = () => {
 		setCategory(category)
 	}
 
-	useEffect(() => {
-		const getRoomCondition: SearchOptions = {
-			room_type: category,
-		} as any
-		getInitialRoom(getRoomCondition)
-	}, [category])
+	// useEffect(() => {
+	// 	const roomQuery = {
+	// 		room_type: category,
+	// 	} as any
+	// 	getInitialRoom(roomQuery)
+	// }, [category])
 
-	const { homeStayList, updateHomestayList } = useHomestayStore()
+	const { homeStayList, updateHomestayList } =
+		useHomestayStore()
 
 	useEffect(() => {
 		getInitialRoom()
 	}, [])
 
 	const getInitialRoom = async (
-		getRoomCondition: SearchOptions = {} as any
+		roomQuery: SearchOptions = {} as any
 	) => {
-		// const res = await RoomAPI.getRoom(getRoomCondition)
+		// const res = await RoomAPI.getRoom(roomQuery)
 		// updateHomestayList(res?.rooms || [])
 		updateHomestayList(ROOM_DATA || [])
 	}
@@ -57,7 +58,7 @@ const HomePage = () => {
 					}}
 				/>
 
-				<ListingMap listings={homeStayList} />
+				{/* <ListingMap listings={homeStayList} /> */}
 				<ListingBottomSheet
 					listing={homeStayList}
 					category={category}
