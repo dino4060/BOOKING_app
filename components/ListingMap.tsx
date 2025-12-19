@@ -1,4 +1,5 @@
-// import LocationAPI from "@/api/LocationAPI"
+import LocationAPI from "@/api/LocationAPI"
+import { DMS } from "@/interface/common"
 import { Room } from "@/interface/Room"
 import { Ionicons } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
@@ -11,6 +12,8 @@ import {
 	TouchableOpacity,
 	View
 } from "react-native"
+import MapView from "react-native-map-clustering"
+import { Marker, PROVIDER_GOOGLE } from "react-native-maps"
 
 interface Props {
 	listings: any[]
@@ -46,21 +49,20 @@ const ListingMap = ({ listings }: Props) => {
 	const renderCluster = (cluster: any) => {
 		const { id, geometry, onPress, properties } = cluster
 		return (
-			null
-			// <Marker
-			// 	key={id}
-			// 	onPress={onPress}
-			// 	coordinate={{
-			// 		longitude: geometry.coordinates[0],
-			// 		latitude: geometry.coordinates[1],
-			// 	}}
-			// >
-			// 	<View style={styles.cluster}>
-			// 		<Text style={styles.clusterText}>
-			// 			{properties.point_count}
-			// 		</Text>
-			// 	</View>
-			// </Marker>
+			<Marker
+				key={id}
+				onPress={onPress}
+				coordinate={{
+					longitude: geometry.coordinates[0],
+					latitude: geometry.coordinates[1],
+				}}
+			>
+				<View style={styles.cluster}>
+					<Text style={styles.clusterText}>
+						{properties.point_count}
+					</Text>
+				</View>
+			</Marker>
 		)
 	}
 	const animatedToRegion = (la: number, long: number) => {
@@ -75,16 +77,16 @@ const ListingMap = ({ listings }: Props) => {
 	}
 
 	const handleSubmit = async () => {
-		// const response: DMS = await LocationAPI.searchLocation(
-		// 	searchDestination
-		// )
+		const response: DMS = await LocationAPI.searchLocation(
+			searchDestination
+		)
 
-		// animatedToRegion(response.la, response.long)
+		animatedToRegion(response.la, response.long)
 	}
 
 	return (
 		<View style={styles.container}>
-			{/* <MapView
+			<MapView
 				ref={mapRef}
 				style={styles.map}
 				onLayout={onMapReady}
@@ -95,26 +97,26 @@ const ListingMap = ({ listings }: Props) => {
 				showsMyLocationButton
 				renderCluster={renderCluster}
 				initialRegion={INITIAL_REGION_VIETNAM}
-			> */}
-			<View
+			>
+			{/* <View
 				ref={mapRef}
 				style={styles.map}
 				onLayout={onMapReady}
-			>
+			> */}
 				{listings.map((x: Room, i: number) => {
 					return (
-						// <Marker
-						// 	onPress={() => onMarkSelected(x)}
-						// 	key={i}
-						// 	coordinate={{
-						// 		latitude: x.latitude
-						// 			? parseFloat(x.latitude.toString())
-						// 			: 0, // If latitude is null, default to 0
-						// 		longitude: x.longitude
-						// 			? parseFloat(x.longitude.toString())
-						// 			: 0, // If longitude is null, default to 0
-						// 	}}
-						// >
+						<Marker
+							onPress={() => onMarkSelected(x)}
+							key={i}
+							coordinate={{
+								latitude: x.latitude
+									? parseFloat(x.latitude.toString())
+									: 0, // If latitude is null, default to 0
+								longitude: x.longitude
+									? parseFloat(x.longitude.toString())
+									: 0, // If longitude is null, default to 0
+							}}
+						>
 							<TouchableOpacity
 								onPress={() => onMarkSelected(x)}
 								style={styles.marker}
@@ -123,11 +125,11 @@ const ListingMap = ({ listings }: Props) => {
 									₤{x.price}
 								</Text>
 							</TouchableOpacity>
-						// </Marker>
+						</Marker>
 					)
 				})}
-			</View>
-			{/* </MapView> */}
+			{/* </View> */}
+			</MapView>
 			<View style={styles.searchBox}>
 				<Ionicons
 					name='location-outline'
