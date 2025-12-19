@@ -103,7 +103,7 @@ const ListingMap = ({ listings }: Props) => {
           );
         })}
       </MapView>
-      <View style={styles.searchBox}>
+      {/* <View style={styles.searchBox}>
         <Ionicons name="location-outline" color="#27272a" size={25} />
         <TextInput
           value={searchDestination}
@@ -112,7 +112,7 @@ const ListingMap = ({ listings }: Props) => {
           placeholder="Know destination? Search here..."
           style={styles.inputStyle}
         />
-      </View>
+      </View> */}
     </View>
   );
 };

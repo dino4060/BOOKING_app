@@ -32,17 +32,42 @@ const ListingBottomSheet = ({
   }, []);
 
 	return (
-		<GestureHandlerRootView style={styles.container}>
-      <BottomSheet
-        ref={bottomSheetRef}
-        onChange={handleSheetChanges}
-      >
-        <BottomSheetView style={styles.contentContainer}>
-          <Text>Awesome 🎉</Text>
-        </BottomSheetView>
-      </BottomSheet>
-    </GestureHandlerRootView>
-  
+		<BottomSheet
+			ref={bottomSheetRef}
+			snapPoints={snapPoints}
+			index={0}
+			onChange={handleSheetChanges}
+			handleIndicatorStyle={{
+				backgroundColor: Colors.grey,
+			}}
+		>
+			<BottomSheetView style={styles.contentContainer}>
+				<TouchableOpacity
+					onPress={() => router.push("/reels/page")}
+					style={styles.reelsButton}
+				>
+					<Text style={styles.reelsText}>
+						Reels
+					</Text>
+				</TouchableOpacity>
+				<Listings
+					listings={listing}
+					category={category}
+				/>
+			</BottomSheetView>
+		</BottomSheet>
+
+		// <View style={styles.container}>
+    //   <BottomSheet
+    //     ref={bottomSheetRef}
+    //     onChange={handleSheetChanges}
+    //   >
+    //     <BottomSheetView style={styles.contentContainer}>
+    //       <Text>Awesome 🎉</Text>
+    //     </BottomSheetView>
+    //   </BottomSheet>
+    // </View>
+
 		// <BottomSheetModalProvider>
 		// 	<BottomSheet
 		// 		index={1}
@@ -92,11 +117,25 @@ export default ListingBottomSheet
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'grey',
+    backgroundColor: 'gray',
   },
   contentContainer: {
     flex: 1,
     padding: 36,
     alignItems: 'center',
   },
+		reelsButton: {
+		paddingHorizontal: 10,
+		backgroundColor: Colors.primary,
+		width: 100,
+		borderTopRightRadius: 15,
+		borderBottomRightRadius: 15,
+		marginBottom: 20,
+	},
+	reelsText: {
+		textAlign: "center",
+		fontFamily: "damion",
+		color: "white",
+		fontSize: 25,
+	},
 });

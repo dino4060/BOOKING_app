@@ -58,7 +58,7 @@ const HomePage = () => {
 					}}
 				/>
 
-				{/* <ListingMap listings={homeStayList} /> */}
+				<ListingMap listings={homeStayList} />
 				<ListingBottomSheet
 					listing={homeStayList}
 					category={category}
