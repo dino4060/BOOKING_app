@@ -1,12 +1,12 @@
 import { Room } from "./Room"
 
-interface User {
+export interface User {
 	_id: string
 	name: string
 	email: string
 	password: string
-	created_at?: Date
-	phone_number?: string
+	createdAt?: Date
+	phone?: string
 }
 
 export interface Host {

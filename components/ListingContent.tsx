@@ -3,11 +3,11 @@ import Colors from "@/constants/Colors"
 import { Room } from "@/interface/Room"
 import { Wishlist } from "@/interface/Wishlist"
 import { WishlistHandle } from "@/utils/Function"
+import { formatPriceVND } from "@/utils/number.util"
 import { Ionicons } from "@expo/vector-icons"
 import AntDesign from "@expo/vector-icons/AntDesign"
 import BottomSheet, {
 	BottomSheetFlatList,
-	BottomSheetFlatListMethods,
 } from "@gorhom/bottom-sheet"
 import { Link, router, useFocusEffect } from "expo-router"
 import React, {
@@ -40,7 +40,6 @@ const ListingContent = ({
 	listings: roomItems,
 	category,
 }: Props) => {
-	const listRef = useRef<BottomSheetFlatListMethods>(null)
 	const [loading, setLoading] = useState<boolean>(false)
 	const [listLove, setListLove] = useState<any>([])
 
@@ -145,35 +144,17 @@ const ListingContent = ({
 					</Text>
 					<View style={{ flexDirection: "row", gap: 4 }}>
 						<Text style={{ fontFamily: "mon-sb" }}>
-							₫{item.price}
+							{formatPriceVND(item.price)}
 						</Text>
-						<Text style={{ fontFamily: "mon" }}>1 đêm</Text>
+						<Text style={{ fontFamily: "mon" }}>2 đêm</Text>
 					</View>
 				</Animated.View>
 			</TouchableOpacity>
 		</Link>
 	)
 
-	// xxx
 	// hooks
 	const sheetRef = useRef<BottomSheet>(null)
-
-	// variables
-	const data = useMemo(
-		() =>
-			Array(50)
-				.fill(0)
-				.map((_, index) => `index-${index}`),
-		[]
-	)
-	const renderItem = useCallback(
-		({ item }: any) => (
-			<View style={styles.itemContainer}>
-				<Text>{item}</Text>
-			</View>
-		),
-		[]
-	)
 
 	const snapPoints = useMemo(
 		() => ["10%", "50%", "95%"],
@@ -249,11 +230,6 @@ const styles = StyleSheet.create({
 		fontFamily: "damion",
 		color: Colors.white,
 		fontSize: 25,
-	},
-	itemContainer: {
-		padding: 6,
-		margin: 6,
-		backgroundColor: "#eee",
 	},
 })
 

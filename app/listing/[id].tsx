@@ -1,8 +1,14 @@
+import { RoomAPI } from "@/api/RoomAPI"
+import { AltPhoto } from "@/assets/data/api"
 import Colors from "@/constants/Colors"
 import { defaultStyles } from "@/constants/Style"
+import { Room } from "@/interface/Room"
 import { Wishlist } from "@/interface/Wishlist"
 import { WishlistHandle } from "@/utils/Function"
-import { UtilFunction } from "@/utils/utilFunction"
+import {
+	formatExperienceInfo,
+	formatPriceVND,
+} from "@/utils/number.util"
 import { AntDesign, Ionicons } from "@expo/vector-icons"
 import {
 	router,
@@ -37,45 +43,19 @@ const IMG_HEIGHT = 340
 
 const DetailsPage = () => {
 	const { id: room_id } = useLocalSearchParams()
-	const [homeStay, setHomeStay] = useState<any>()
+	const [homeStay, setHomeStay] = useState<Room>()
 	const navigation = useNavigation()
 	const scrollRef = useAnimatedRef<Animated.ScrollView>()
 	const [type, setType] = useState<string>()
 
-	const getRoomById = async (id: string) => {
-		try {
-			// const res = await RoomAPI.getRoomById(id)
-			// setHomeStay(res?.data.data.room)
-			setHomeStay({
-				_id: "1",
-				name: "Xuân Thắng",
-				summary: "Phòng rộng view biển",
-				transit: "transit",
-				house_rules: "house rules",
-				thumbnail_urls: [],
-				host: {},
-				street: "Số 1 VVN",
-				smart_location: "Số 1 VVN",
-				country: "VN",
-				// latitude?: number
-				// longitude?: number
-				room_type: "SUPER",
-				bathRooms: 2,
-				bedRooms: 2,
-				beds: 2,
-				price: 110,
-				weekly_price: 120,
-				review: "5 sao ",
-				// created_at?: Date
-				bookedDate: [],
-			})
-		} catch (error) {
-			console.log(error)
-		}
+	const getRoom = async (id: number) => {
+		const res = await RoomAPI.getRoomById(id)
+		if (res.success == false) return
+		setHomeStay(res.data || ({} as Room))
 	}
 
 	useEffect(() => {
-		getRoomById(room_id as string)
+		getRoom(Number(room_id))
 		handleWishlist()
 	}, [])
 
@@ -83,7 +63,7 @@ const DetailsPage = () => {
 		try {
 			await Share.share({
 				title: homeStay?.name || "",
-				url: homeStay?.thumbnail_urls?.[0] || "",
+				url: homeStay?.thumbnailUrls?.[0] || AltPhoto,
 			})
 		} catch (err) {
 			console.log(err)
@@ -111,7 +91,7 @@ const DetailsPage = () => {
 		const res: Wishlist[] =
 			await WishlistHandle.getWishList()
 		const idList = res.map((x) => x.room._id)
-		const checkExit = idList.includes(room_id as string)
+		const checkExit = idList.includes(Number(room_id))
 			? "yes"
 			: "no"
 		console.log("check exit: ", checkExit)
@@ -181,7 +161,7 @@ const DetailsPage = () => {
 					width={width}
 					height={340}
 					autoPlay={true}
-					data={homeStay?.thumbnail_urls as any}
+					data={homeStay?.thumbnailUrls as any}
 					scrollAnimationDuration={1000}
 					renderItem={({ index }) => {
 						return (
@@ -189,7 +169,7 @@ const DetailsPage = () => {
 								<Image
 									source={{
 										uri:
-											homeStay?.thumbnail_urls?.[index] ||
+											homeStay?.thumbnailUrls?.[index] ||
 											"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3N_sAjazDv75OEWZMYE-6e2xBhsXwoNhthjB0zbCKPA&s",
 									}}
 									style={[styles.image]}
@@ -201,15 +181,22 @@ const DetailsPage = () => {
 				/>
 
 				<View style={styles.infoContainer}>
-					<Text style={styles.name}>{homeStay?.name}</Text>
+					<Text style={styles.name}>
+						{homeStay?.highlight}
+					</Text>
 
+					{/* <Text style={styles.location}> */}
 					<Text style={styles.location}>
-						{homeStay?.room_type} in{" "}
-						{homeStay?.smart_location}
+						{homeStay?.name}
 					</Text>
 					<Text style={styles.rooms}>
-						{homeStay?.bedRooms} bedrooms · {homeStay?.beds}{" "}
-						bed · {homeStay?.bathRooms} bathrooms
+						{homeStay?.bedRooms} phòng ngủ ·{" "}
+						{homeStay?.beds} giường{" "}
+						{homeStay?.isCoupleBed ? "đôi" : "cá nhân"} ·{" "}
+						{homeStay?.bathRooms} phòng tắm{" "}
+						{homeStay?.isPrivateBathrooms
+							? "riêng"
+							: "chia sẻ"}
 					</Text>
 					<View
 						style={{
@@ -257,22 +244,24 @@ const DetailsPage = () => {
 
 						<View>
 							<Text
-								style={{ fontSize: 14, fontFamily: "mon" }}
-							>
-								Hosted by {homeStay?.host?.name}
-							</Text>
-							<Text
-								onPress={() =>
-									console.log(homeStay?.host?.created_at)
-								}
 								style={{
 									fontSize: 14,
 									fontFamily: "mon-sb",
 								}}
 							>
-								Host since{" "}
-								{UtilFunction.formatToHostSince(
-									homeStay?.host?.created_at as Date
+								Host là {homeStay?.host?.name}
+							</Text>
+							<Text
+								onPress={() =>
+									console.log(homeStay?.host?.createdAt)
+								}
+								style={{
+									fontSize: 14,
+									fontFamily: "mon",
+								}}
+							>
+								{formatExperienceInfo(
+									homeStay?.host?.createdAt
 								)}
 							</Text>
 						</View>
@@ -280,41 +269,7 @@ const DetailsPage = () => {
 
 					<View style={styles.divider} />
 
-					<View style={styles.detail}>
-						<Ionicons name='thumbs-up-outline' size={24} />
-						<View>
-							<Text
-								style={{
-									fontFamily: "mon-b",
-									fontSize: 16,
-								}}
-							>
-								Summary
-							</Text>
-							<Text style={styles.description}>
-								{homeStay?.summary}
-							</Text>
-						</View>
-					</View>
-
-					<View style={{ ...styles.detail, marginTop: 12 }}>
-						<Ionicons name='car-outline' size={24} />
-						<View>
-							<Text
-								style={{
-									fontFamily: "mon-b",
-									fontSize: 16,
-								}}
-							>
-								Transit
-							</Text>
-							<Text style={styles.description}>
-								{homeStay?.transit}
-							</Text>
-						</View>
-					</View>
-
-					<View style={{ ...styles.detail, marginTop: 12 }}>
+					<View style={{ ...styles.detail }}>
 						<Ionicons name='diamond-outline' size={24} />
 						<View>
 							<Text
@@ -323,7 +278,42 @@ const DetailsPage = () => {
 									fontSize: 16,
 								}}
 							>
-								Amenities
+								Tiện nghi
+							</Text>
+							<View
+								style={{
+									display: "flex",
+									flexDirection: "row",
+									flexWrap: "wrap",
+									maxWidth: "95%",
+									gap: 5,
+								}}
+							>
+								{homeStay?.amenities.map((item) => (
+									<Text
+										key={item}
+										style={styles.description}
+									>
+										{item}
+									</Text>
+								))}
+							</View>
+						</View>
+					</View>
+
+					<View style={{ ...styles.detail, marginTop: 12 }}>
+						<Ionicons name='thumbs-up-outline' size={24} />
+						<View>
+							<Text
+								style={{
+									fontFamily: "mon-b",
+									fontSize: 16,
+								}}
+							>
+								Chi tiết
+							</Text>
+							<Text style={styles.description}>
+								{homeStay?.detail}
 							</Text>
 						</View>
 					</View>
@@ -343,9 +333,9 @@ const DetailsPage = () => {
 				>
 					<TouchableOpacity style={styles.footerText}>
 						<Text style={styles.footerPrice}>
-							€{homeStay?.price}
+							{formatPriceVND(homeStay?.price)}
 						</Text>
-						<Text>night</Text>
+						<Text>cho 2 đêm</Text>
 					</TouchableOpacity>
 
 					<TouchableOpacity
@@ -449,7 +439,7 @@ const styles = StyleSheet.create({
 	},
 	description: {
 		fontSize: 15,
-		maxWidth: "90%",
+		maxWidth: "95%",
 		fontFamily: "mon",
 		marginTop: 4,
 		color: "black",

@@ -1,37 +1,32 @@
+import { InternetException } from "@/assets/data/api"
 import { ApiRes } from "@/interface/API"
 import { Room } from "@/interface/Room"
 import { SearchOptions } from "@/interface/SearchOptions"
 import { axiosClient } from "./AxiosClient"
 
-const ROOM_PUBLIC_API = "/api/public/rooms"
+const RoomPublicApi = "/api/public/rooms"
 
 export const RoomAPI = {
-	getRoom: async (
+	listRooms: async (
 		getRoomCondition: SearchOptions | null
 	) => {
 		try {
-			const res = await axiosClient.get(ROOM_PUBLIC_API)
-			if (res.data.success === false)
-				console.error(res.data.message)
-			console.log(res.data.data)
-
+			const route = `${RoomPublicApi}`
+			const res = await axiosClient.get(route)
 			return res.data as ApiRes<Room[]>
 		} catch (error) {
 			console.error(error)
+			return InternetException
 		}
 	},
-	getRoomById: async (id: string) => {
+	getRoomById: async (id: number) => {
 		try {
-			const queryString = (
-				"/room/getRoomInfo?room_id=" + id
-			).trim()
-			const res = await axiosClient.get(queryString)
-
-			if (res.status === 200) {
-				return res
-			}
+			const route = `${RoomPublicApi}/${id}`
+			const res = await axiosClient.get(route)
+			return res.data as ApiRes<Room>
 		} catch (error) {
 			console.log(error)
+			return InternetException
 		}
 	},
 	reservation: async (

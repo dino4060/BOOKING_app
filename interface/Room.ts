@@ -1,4 +1,4 @@
-import { User } from "@/store/useUserStore"
+import { User } from "./Host"
 
 export type Room = {
 	// Required fields

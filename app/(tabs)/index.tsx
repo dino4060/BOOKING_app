@@ -28,14 +28,15 @@ const HomePage = () => {
 		useHomestayStore()
 
 	useEffect(() => {
-		getInitialRoom()
+		getRooms()
 	}, [])
 
-	const getInitialRoom = async (
+	const getRooms = async (
 		roomQuery: SearchOptions = {} as any
 	) => {
-		const res = await RoomAPI.getRoom(roomQuery)
-		if (res) updateHomestayList(res.data)
+		const res = (await RoomAPI.listRooms(roomQuery)) || []
+		if (res.success == false) return
+		updateHomestayList(res.data || [])
 	}
 
 	return (
