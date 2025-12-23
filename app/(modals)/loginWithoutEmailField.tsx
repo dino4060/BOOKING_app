@@ -56,12 +56,8 @@ const LoginWithoutEmailField = () => {
 		saveUserStore(user)
 		await saveValueSecureStore("token", token)
 		await saveValueSecureStore("email", user.email)
-		await saveValueSecureStore("id", String(user._id))
 		await saveValueSecureStore("password", password)
-		await saveValueSecureStore(
-			"profile_image",
-			user.avatarUrl || ""
-		)
+
 		ToastAndroid.show(
 			"Welcome back " + user.name + " 😍",
 			3000

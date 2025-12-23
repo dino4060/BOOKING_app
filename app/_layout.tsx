@@ -36,7 +36,7 @@ SplashScreen.hideAsync()
 
 export {
 	// Catch any errors thrown by the Layout component.
-	ErrorBoundary
+	ErrorBoundary,
 } from "expo-router"
 
 export const unstable_settings = {
@@ -95,7 +95,7 @@ export default function RootLayout() {
 		// 	publishableKey={CLERK_PUBLISHABLE_KEY!}
 		// 	tokenCache={tokenCache}
 		// >
-			<RootLayoutNav />
+		<RootLayoutNav />
 		// </ClerkProvider>
 	)
 }
@@ -147,7 +147,7 @@ function RootLayoutNav() {
 			<Stack.Screen
 				name='(modals)/login'
 				options={{
-					title: "Login or sign up",
+					title: "Đăng ký",
 
 					headerTitleStyle: {
 						fontFamily: "mon-sb",
@@ -170,7 +170,7 @@ function RootLayoutNav() {
 			<Stack.Screen
 				name='(modals)/signup'
 				options={{
-					title: "Sign up",
+					title: "Đăng ký tài khoản mới",
 
 					headerTitleStyle: {
 						fontFamily: "mon-sb",

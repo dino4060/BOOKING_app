@@ -176,8 +176,12 @@ const profile = () => {
 								</View>
 							)}
 						</View>
-						{user._id && <Text>{user.email}</Text>}
-						{user._id && <Text>{"09/08/2003"}</Text>}
+						{user._id && (
+							<Text>{`Email ${user.email}`}</Text>
+						)}
+						{user._id && (
+							<Text>{`Số điện thoại ${user.phone}`}</Text>
+						)}
 					</View>
 
 					<Button
@@ -199,10 +203,7 @@ const profile = () => {
 					</View>
 
 					<Link href={"/(modals)/login"} asChild>
-						<Button
-							title='Login   |   Register'
-							color={Colors.dark}
-						/>
+						<Button title='Login' color={Colors.dark} />
 					</Link>
 				</SafeAreaView>
 			)}

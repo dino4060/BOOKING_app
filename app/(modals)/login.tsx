@@ -56,6 +56,9 @@ const Login = () => {
 	) => {
 		setData((pre) => ({ ...pre, [inputType]: text }))
 
+		if (inputType === "email") setEmailError("")
+		if (inputType === "password") setPasswordError("")
+
 		if (
 			inputType === "email" &&
 			text.toLowerCase().endsWith(".com")
@@ -114,12 +117,9 @@ const Login = () => {
 		saveUserStore(user)
 		await saveValueSecureStore("token", token)
 		await saveValueSecureStore("email", user.email)
-		await saveValueSecureStore("id", String(user._id))
 		await saveValueSecureStore("password", data.password)
-		ToastAndroid.show(
-			"Welcome back " + user.name + " 😍",
-			3000
-		)
+
+		ToastAndroid.show("Welcome " + user.name + " 😍", 3000)
 		router.push("/(tabs)")
 	}
 
@@ -176,7 +176,7 @@ const Login = () => {
 				onPress={handleLogin}
 				style={{ ...defaultStyles.btn, marginTop: 10 }}
 			>
-				<Text style={defaultStyles.btnText}>Continue</Text>
+				<Text style={defaultStyles.btnText}>Login</Text>
 			</TouchableOpacity>
 
 			<TouchableOpacity
@@ -189,7 +189,7 @@ const Login = () => {
 				}}
 			>
 				<Text style={defaultStyles.btnText}>
-					Forget Your Password?
+					Forget password?
 				</Text>
 			</TouchableOpacity>
 
@@ -226,7 +226,9 @@ const Login = () => {
 						size={24}
 						style={defaultStyles.btnIcon}
 					/>
-					<Text style={style.btnOutlineText}>Sign Up</Text>
+					<Text style={style.btnOutlineText}>
+						Bạn chưa có tài khoản? Tạo ngay
+					</Text>
 				</TouchableOpacity>
 			</View>
 
@@ -244,7 +246,6 @@ const Login = () => {
 					style={{
 						borderBottomColor: "#000",
 						flex: 1,
-
 						borderBottomWidth: StyleSheet.hairlineWidth,
 					}}
 				></View>

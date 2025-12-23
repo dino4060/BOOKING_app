@@ -20,6 +20,7 @@ export const defaultStyles = StyleSheet.create({
 		borderRadius: 8,
 		justifyContent: "center",
 		alignItems: "center",
+		marginTop: 15,
 	},
 	btnCustom_1: {
 		backgroundColor: Colors.slate,
