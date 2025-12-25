@@ -9,7 +9,7 @@ import {
 	formatExperienceInfo,
 	formatPriceVND,
 } from "@/utils/number.util"
-import { AntDesign, Ionicons } from "@expo/vector-icons"
+import { Ionicons } from "@expo/vector-icons"
 import {
 	router,
 	useLocalSearchParams,
@@ -219,16 +219,16 @@ const DetailsPage = () => {
 							style={styles.roundButton}
 						>
 							{isLikedRoom === true ? (
-								<AntDesign
+								<Ionicons
 									name='heart'
 									size={24}
 									color={Colors.primary}
 								/>
 							) : (
 								<Ionicons
-									name='heart'
+									name='heart-outline'
 									size={24}
-									color={Colors.white}
+									color={Colors.dark}
 								/>
 							)}
 						</TouchableOpacity>

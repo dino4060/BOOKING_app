@@ -1,8 +1,14 @@
+import { WishlistAPI } from "@/api/WishlistAPI"
+import Colors from "@/constants/Colors"
 import { defaultStyles } from "@/constants/Style"
+import { TSetState } from "@/interface/Base"
 import { TLikedRoom } from "@/interface/Wishlist"
 import { formatPriceVND } from "@/utils/number.util"
+import { Ionicons } from "@expo/vector-icons"
 import { Link } from "expo-router"
+import { useRef } from "react"
 import {
+	Alert,
 	FlatList,
 	ListRenderItem,
 	StyleSheet,
@@ -18,9 +24,69 @@ import Animated, {
 interface Props {
 	list: TLikedRoom[]
 	count: number
+	likedRoomIdSet: Set<number>
+	setLikedRoomIdSet: TSetState<Set<number>>
 }
 
-const WishlistContent = ({ list: items, count }: Props) => {
+const WishlistContent = ({
+	list: items,
+	count,
+	likedRoomIdSet,
+	setLikedRoomIdSet,
+}: Props) => {
+	const isProcessLoveButton = useRef(false)
+	const addLikedRoomIdSet = (roomId: number) => {
+		setLikedRoomIdSet((prev) => {
+			const next = new Set(prev)
+			next.add(roomId)
+			return next
+		})
+	}
+	const deleteLikedRoomIdSet = (roomId: number) => {
+		setLikedRoomIdSet((prev) => {
+			const next = new Set(prev)
+			next.delete(roomId)
+			return next
+		})
+	}
+
+	const handleClickLoveButton = async (
+		roomIdString: string
+	) => {
+		if (isProcessLoveButton.current === true) return
+
+		try {
+			isProcessLoveButton.current = true
+
+			const roomId = Number(roomIdString)
+			const isLikedRoom = likedRoomIdSet.has(roomId)
+
+			if (isLikedRoom === false) {
+				addLikedRoomIdSet(roomId)
+				const res = await WishlistAPI.likeRoom(roomId)
+
+				if (res.success === false) {
+					console.error("API error: ", res.message)
+					Alert.alert("Có lỗi", res.message)
+					deleteLikedRoomIdSet(roomId)
+				}
+			} else {
+				deleteLikedRoomIdSet(roomId)
+				const res = await WishlistAPI.unlikeRoom(roomId)
+
+				if (res.success === false) {
+					console.error("API error: ", res.message)
+					Alert.alert("Có lỗi", res.message)
+					addLikedRoomIdSet(roomId)
+				}
+			}
+		} catch (error) {
+			console.error("Click love button error: ", error)
+		} finally {
+			isProcessLoveButton.current = false
+		}
+	}
+
 	const renderRow: ListRenderItem<TLikedRoom> = ({
 		item,
 	}) => (
@@ -39,6 +105,31 @@ const WishlistContent = ({ list: items, count }: Props) => {
 						}}
 						style={styles.image}
 					/>
+
+					<TouchableOpacity
+						onPress={() =>
+							handleClickLoveButton(String(item.room._id))
+						}
+						style={{
+							position: "absolute",
+							right: 45,
+							top: 30,
+						}}
+					>
+						{likedRoomIdSet.has(item.room._id) ? (
+							<Ionicons
+								name='heart'
+								size={24}
+								color={Colors.primary}
+							/>
+						) : (
+							<Ionicons
+								name='heart'
+								size={24}
+								color={Colors.white}
+							/>
+						)}
+					</TouchableOpacity>
 
 					<View
 						style={{

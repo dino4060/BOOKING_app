@@ -12,17 +12,14 @@ const Wishlists = () => {
 	const user = useUserStore((state) => state.user)
 	const [list, setList] = useState<TLikedRoom[]>([])
 	const [count, setCount] = useState<number>(0)
-
-	// useEffect(() => {
-	// 	if (user.isLogin === false) {
-	// 		router.push("/login")
-	// 	}
-	// 	paginateWishlist()
-	// }, [user])
+	const [likedRoomIdSet, setLikedRoomIdSet] = useState<
+		Set<number>
+	>(new Set())
 
 	useFocusEffect(
 		useCallback(() => {
 			if (user.isLogin === false) {
+				setLikedRoomIdSet(new Set())
 				router.push("/login")
 			}
 
@@ -37,10 +34,16 @@ const Wishlists = () => {
 					Alert.alert("Có lỗi", res.message)
 					return
 				}
-				console.log(res.data)
 
 				setList(res.data.items)
 				setCount(res.data.totalItems)
+				setLikedRoomIdSet(
+					new Set(
+						res.data.items.map(
+							(likedRoom) => likedRoom.room._id
+						)
+					)
+				)
 			}
 
 			paginateWishlist()
@@ -56,7 +59,7 @@ const Wishlists = () => {
 					}}
 				></Stack.Screen>
 
-				<WishList list={list} count={count} />
+				<WishList list={list} count={count} likedRoomIdSet={likedRoomIdSet} setLikedRoomIdSet={setLikedRoomIdSet} />
 			</SafeAreaView>
 		</GestureHandlerRootView>
 	)

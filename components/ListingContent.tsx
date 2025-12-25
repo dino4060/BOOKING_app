@@ -5,7 +5,6 @@ import { TRoom } from "@/interface/Room"
 import { useUserStore } from "@/store/useUserStore"
 import { formatPriceVND } from "@/utils/number.util"
 import { Ionicons } from "@expo/vector-icons"
-import AntDesign from "@expo/vector-icons/AntDesign"
 import BottomSheet, {
 	BottomSheetFlatList,
 } from "@gorhom/bottom-sheet"
@@ -146,6 +145,7 @@ const ListingContent = ({
 						}}
 						style={styles.image}
 					/>
+
 					<TouchableOpacity
 						onPress={() =>
 							handleClickLoveButton(String(room._id))
@@ -157,7 +157,7 @@ const ListingContent = ({
 						}}
 					>
 						{likedRoomIdSet.has(room._id) ? (
-							<AntDesign
+							<Ionicons
 								name='heart'
 								size={24}
 								color={Colors.primary}
@@ -170,6 +170,7 @@ const ListingContent = ({
 							/>
 						)}
 					</TouchableOpacity>
+
 					<View
 						style={{
 							flexDirection: "row",
@@ -185,9 +186,11 @@ const ListingContent = ({
 							<Ionicons name='star' size={16} />
 						</View>
 					</View>
+
 					<Text style={{ fontFamily: "mon" }}>
 						{room.roomType}
 					</Text>
+
 					<View style={{ flexDirection: "row", gap: 4 }}>
 						<Text style={{ fontFamily: "mon-sb" }}>
 							{formatPriceVND(room.price)}

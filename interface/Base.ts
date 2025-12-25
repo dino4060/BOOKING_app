@@ -26,3 +26,5 @@ export type TPageData<T> = {
 	size: number
 	items: T[]
 }
+
+export type TSetState<T> = (value: T | ((prev: T) => T)) => void;
