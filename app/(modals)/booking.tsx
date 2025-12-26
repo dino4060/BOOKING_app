@@ -1,5 +1,6 @@
 import Colors from "@/constants/Colors"
 import { defaultStyles } from "@/constants/Style"
+import { TSetState } from "@/interface/Base"
 import { useHomestayStore } from "@/store/useHomestayStore"
 import { formatPriceVND } from "@/utils/number.util"
 import { Ionicons } from "@expo/vector-icons"
@@ -21,12 +22,18 @@ import Animated, {
 
 const Page = () => {
 	const [openCard, setOpenCard] = useState<
-		"TIME" | "AMENITIES" | "PRICE" | "SORT" | "DESTINATION"
+		| "TIME"
+		| "AMENITIES"
+		| "PRICE"
+		| "SORT"
+		| "DESTINATION"
+		| "SPECIFICATION"
 	>("TIME")
 	const router = useRouter()
 	const today = new Date().toISOString().substring(0, 10)
 	const { homeStayParam, updateHomestayParam } =
 		useHomestayStore()
+
 	// PRICE
 	const [minPrice, setMinPrice] = useState<
 		number | undefined
@@ -36,6 +43,23 @@ const Page = () => {
 	>(undefined)
 	const [priceFeedback, setPriceFeedback] =
 		useState<string>("")
+
+	// SPECIFICATION
+	const [bedRooms, setBedRooms] = useState<
+		number | undefined
+	>(undefined)
+	const [beds, setBeds] = useState<number | undefined>(
+		undefined
+	)
+	const [isCoupleBed, setIsCoupleBed] = useState<
+		boolean | undefined
+	>(undefined)
+	const [bathRooms, setBathRooms] = useState<
+		number | undefined
+	>(undefined)
+	const [isPrivateBathrooms, setIsPrivateBathrooms] =
+		useState<boolean | undefined>(undefined)
+
 	// DESTINATION
 	const [destination, setDestination] =
 		useState<string>("Đà Lạt")
@@ -43,29 +67,82 @@ const Page = () => {
 	useEffect(() => {
 		setMinPrice(homeStayParam.minPrice || undefined)
 		setMaxPrice(homeStayParam.maxPrice || undefined)
+
+		setBedRooms(homeStayParam.bedRooms || undefined)
+		setBeds(homeStayParam.beds || undefined)
+		setIsCoupleBed(homeStayParam.isCoupleBed ?? undefined)
+		setBathRooms(homeStayParam.bathRooms || undefined)
+		setIsPrivateBathrooms(
+			homeStayParam.isPrivateBathrooms ?? undefined
+		)
 	}, [homeStayParam])
 
 	const onClearAll = () => {
 		setOpenCard("TIME")
+
 		setMinPrice(undefined)
 		setMaxPrice(undefined)
+		setPriceFeedback("")
+
+		setBedRooms(undefined)
+		setBeds(undefined)
+		setIsCoupleBed(undefined)
+		setBathRooms(undefined)
+		setIsPrivateBathrooms(undefined)
 	}
 
 	const onSearch = async () => {
-		// const res = await RoomAPI.listRooms(search)
-		// if (res.success === false) {
-		// 	console.error("API error: ", res.message)
-		// 	Alert.alert("Có lỗi", res.message)
-		// 	return
-		// }
-		// updateHomestayList(res.data)
 		const { destination } = homeStayParam
 		updateHomestayParam({
 			destination,
+
 			minPrice,
 			maxPrice,
+
+			bedRooms,
+			beds,
+			isCoupleBed,
+			bathRooms,
+			isPrivateBathrooms,
 		})
 		router.back()
+	}
+
+	const getSpecificationPreview = () => {
+		const specs = []
+		if (bedRooms !== undefined)
+			specs.push(`${bedRooms} phòng ngủ`)
+		if (beds !== undefined) specs.push(`${beds} giường`)
+		if (isCoupleBed !== undefined)
+			specs.push(isCoupleBed ? "Giường đôi" : "Giường đơn")
+		if (bathRooms !== undefined)
+			specs.push(`${bathRooms} phòng tắm`)
+		if (isPrivateBathrooms !== undefined)
+			specs.push(
+				isPrivateBathrooms ? "Cá nhân" : "Dùng chung"
+			)
+
+		if (specs.length === 0) return "Không giới hạn"
+
+		const specString = specs.join(" • ")
+
+		return specString
+	}
+
+	const minusNumber = (
+		num: number | undefined,
+		setNum: TSetState<number | undefined>
+	) => {
+		if (num === undefined) {
+			return
+		}
+
+		if (num === 1) {
+			setNum(undefined)
+			return
+		}
+
+		setNum(num - 1)
 	}
 
 	return (
@@ -146,9 +223,6 @@ const Page = () => {
 												: "Không giới hạn"
 									  }`}
 							</Text>
-							{/* <Text style={styles.previewData}>
-								Không giới hạn
-							</Text> */}
 						</TouchableOpacity>
 					)}
 
@@ -238,7 +312,7 @@ const Page = () => {
 										value={
 											maxPrice !== undefined
 												? maxPrice.toString()
-												: undefined
+												: ""
 										}
 										onChangeText={(text) => {
 											const value = text.replace(
@@ -264,6 +338,264 @@ const Page = () => {
 											}
 										}}
 									/>
+								</View>
+							</Animated.View>
+						</Fragment>
+					)}
+				</View>
+
+				{/* SPECIFICATION */}
+				<View style={styles.card}>
+					{openCard !== "SPECIFICATION" && (
+						<TouchableOpacity
+							onPress={() => setOpenCard("SPECIFICATION")}
+							style={styles.cardPreview}
+						>
+							<Text style={styles.previewText}>
+								Thông số phòng
+							</Text>
+							<Text
+								style={styles.previewData}
+								numberOfLines={1}
+								ellipsizeMode='tail'
+							>
+								{getSpecificationPreview()}
+							</Text>
+						</TouchableOpacity>
+					)}
+
+					{openCard === "SPECIFICATION" && (
+						<Fragment>
+							<Text style={styles.cardHeader}>
+								Lọc theo thông số phòng
+							</Text>
+
+							<Animated.View style={styles.cardBody}>
+								{/* Số phòng ngủ */}
+								<View style={specStyles.specRow}>
+									<Text style={specStyles.specLabel}>
+										Số phòng ngủ
+									</Text>
+									<View style={specStyles.counterGroup}>
+										<TouchableOpacity
+											style={specStyles.counterBtn}
+											onPress={() =>
+												minusNumber(bedRooms, setBedRooms)
+											}
+										>
+											<Text
+												style={specStyles.counterBtnText}
+											>
+												−
+											</Text>
+										</TouchableOpacity>
+										<Text style={specStyles.counterValue}>
+											{bedRooms ?? 0}
+										</Text>
+										<TouchableOpacity
+											style={specStyles.counterBtn}
+											onPress={() => {
+												setBedRooms((bedRooms ?? 0) + 1)
+											}}
+										>
+											<Text
+												style={specStyles.counterBtnText}
+											>
+												+
+											</Text>
+										</TouchableOpacity>
+									</View>
+								</View>
+
+								{/* Số giường */}
+								<View style={specStyles.specRow}>
+									<Text style={specStyles.specLabel}>
+										Số giường
+									</Text>
+									<View style={specStyles.counterGroup}>
+										<TouchableOpacity
+											style={specStyles.counterBtn}
+											onPress={() =>
+												minusNumber(beds, setBeds)
+											}
+										>
+											<Text
+												style={specStyles.counterBtnText}
+											>
+												−
+											</Text>
+										</TouchableOpacity>
+										<Text style={specStyles.counterValue}>
+											{beds ?? 0}
+										</Text>
+										<TouchableOpacity
+											style={specStyles.counterBtn}
+											onPress={() => {
+												setBeds((beds ?? 0) + 1)
+											}}
+										>
+											<Text
+												style={specStyles.counterBtnText}
+											>
+												+
+											</Text>
+										</TouchableOpacity>
+									</View>
+								</View>
+
+								{/* Loại giường */}
+								<View style={specStyles.specRow}>
+									<Text style={specStyles.specLabel}>
+										Loại giường
+									</Text>
+									<View style={specStyles.toggleGroup}>
+										<TouchableOpacity
+											style={[
+												specStyles.toggleBtn,
+												isCoupleBed === false &&
+													specStyles.toggleBtnActive,
+											]}
+											onPress={() =>
+												setIsCoupleBed(
+													isCoupleBed === false
+														? undefined
+														: false
+												)
+											}
+										>
+											<Text
+												style={[
+													specStyles.toggleBtnText,
+													isCoupleBed === false &&
+														specStyles.toggleBtnTextActive,
+												]}
+											>
+												Giường đơn
+											</Text>
+										</TouchableOpacity>
+										<TouchableOpacity
+											style={[
+												specStyles.toggleBtn,
+												isCoupleBed === true &&
+													specStyles.toggleBtnActive,
+											]}
+											onPress={() =>
+												setIsCoupleBed(
+													isCoupleBed === true
+														? undefined
+														: true
+												)
+											}
+										>
+											<Text
+												style={[
+													specStyles.toggleBtnText,
+													isCoupleBed === true &&
+														specStyles.toggleBtnTextActive,
+												]}
+											>
+												Giường đôi
+											</Text>
+										</TouchableOpacity>
+									</View>
+								</View>
+
+								{/* Số phòng tắm */}
+								<View style={specStyles.specRow}>
+									<Text style={specStyles.specLabel}>
+										Số phòng tắm
+									</Text>
+									<View style={specStyles.counterGroup}>
+										<TouchableOpacity
+											style={specStyles.counterBtn}
+											onPress={() =>
+												minusNumber(bathRooms, setBathRooms)
+											}
+										>
+											<Text
+												style={specStyles.counterBtnText}
+											>
+												−
+											</Text>
+										</TouchableOpacity>
+										<Text style={specStyles.counterValue}>
+											{bathRooms ?? 0}
+										</Text>
+										<TouchableOpacity
+											style={specStyles.counterBtn}
+											onPress={() => {
+												setBathRooms((bathRooms ?? 0) + 1)
+											}}
+										>
+											<Text
+												style={specStyles.counterBtnText}
+											>
+												+
+											</Text>
+										</TouchableOpacity>
+									</View>
+								</View>
+
+								{/* Loại phòng tắm */}
+								<View
+									style={[
+										specStyles.specRow,
+										{ borderBottomWidth: 0 },
+									]}
+								>
+									<Text style={specStyles.specLabel}>
+										Loại phòng tắm
+									</Text>
+									<View style={specStyles.toggleGroup}>
+										<TouchableOpacity
+											style={[
+												specStyles.toggleBtn,
+												isPrivateBathrooms === true &&
+													specStyles.toggleBtnActive,
+											]}
+											onPress={() =>
+												setIsPrivateBathrooms(
+													isPrivateBathrooms === true
+														? undefined
+														: true
+												)
+											}
+										>
+											<Text
+												style={[
+													specStyles.toggleBtnText,
+													isPrivateBathrooms === true &&
+														specStyles.toggleBtnTextActive,
+												]}
+											>
+												Tắm riêng
+											</Text>
+										</TouchableOpacity>
+										<TouchableOpacity
+											style={[
+												specStyles.toggleBtn,
+												isPrivateBathrooms === false &&
+													specStyles.toggleBtnActive,
+											]}
+											onPress={() =>
+												setIsPrivateBathrooms(
+													isPrivateBathrooms === false
+														? undefined
+														: false
+												)
+											}
+										>
+											<Text
+												style={[
+													specStyles.toggleBtnText,
+													isPrivateBathrooms === false &&
+														specStyles.toggleBtnTextActive,
+												]}
+											>
+												Tắm chung
+											</Text>
+										</TouchableOpacity>
+									</View>
 								</View>
 							</Animated.View>
 						</Fragment>
@@ -487,6 +819,7 @@ const styles = StyleSheet.create({
 		fontFamily: "mon-sb",
 		fontSize: 14,
 		color: Colors.dark,
+		maxWidth: 200,
 	},
 
 	guestItem: {
@@ -540,5 +873,72 @@ const priceStyles = StyleSheet.create({
 		fontSize: 14,
 		color: "#6B7280",
 		// fontStyle: "italic",
+	},
+})
+
+const specStyles = StyleSheet.create({
+	specRow: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		paddingVertical: 16,
+		borderBottomWidth: StyleSheet.hairlineWidth,
+		borderBottomColor: Colors.grey,
+	},
+	specLabel: {
+		fontSize: 16,
+		fontWeight: "600",
+		color: "#374151",
+	},
+	counterGroup: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: 16,
+	},
+	counterBtn: {
+		width: 36,
+		height: 36,
+		borderRadius: 18,
+		borderWidth: 1,
+		borderColor: "#D1D5DB",
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "#fff",
+	},
+	counterBtnText: {
+		fontSize: 20,
+		fontWeight: "600",
+		color: "#374151",
+	},
+	counterValue: {
+		fontSize: 16,
+		fontWeight: "600",
+		color: "#374151",
+		minWidth: 24,
+		textAlign: "center",
+	},
+	toggleGroup: {
+		flexDirection: "row",
+		gap: 8,
+	},
+	toggleBtn: {
+		paddingHorizontal: 16,
+		paddingVertical: 8,
+		borderRadius: 20,
+		borderWidth: 1,
+		borderColor: "#D1D5DB",
+		backgroundColor: "#fff",
+	},
+	toggleBtnActive: {
+		backgroundColor: Colors.primary,
+		borderColor: Colors.primary,
+	},
+	toggleBtnText: {
+		fontSize: 14,
+		fontWeight: "500",
+		color: "#374151",
+	},
+	toggleBtnTextActive: {
+		color: "#fff",
 	},
 })

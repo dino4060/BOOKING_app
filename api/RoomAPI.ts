@@ -10,9 +10,16 @@ export const RoomAPI = {
 				"/api/public/rooms",
 				{
 					params: {
-						destination: param?.destination,
-						"min-price": param?.minPrice,
-						"max-price": param?.maxPrice,
+						destination: param?.destination || undefined,
+						"min-price": param?.minPrice || undefined,
+						"max-price": param?.maxPrice || undefined,
+						bedrooms: param?.bedRooms || undefined,
+						beds: param?.beds || undefined,
+						"is-couple-bed":
+							param?.isCoupleBed ?? undefined,
+						bathrooms: param?.bathRooms || undefined,
+						"is-private-bathrooms":
+							param?.isPrivateBathrooms ?? undefined,
 					},
 				}
 			)
@@ -20,7 +27,6 @@ export const RoomAPI = {
 		} catch (error: any) {
 			console.error(error)
 			if (error.response) {
-				console.error("BE error:", error.response.message)
 				return error.response.data as TApiResFail
 			}
 			return InternetException
@@ -35,7 +41,6 @@ export const RoomAPI = {
 		} catch (error: any) {
 			console.error(error)
 			if (error.response) {
-				console.error("BE error:", error.response.message)
 				return error.response.data as TApiResFail
 			}
 			return InternetException

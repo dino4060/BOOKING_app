@@ -38,7 +38,15 @@ export type TRoomShort = Omit<
 >
 
 export type TRoomParam = Partial<
-	Pick<TRoom, "destination">
+	Pick<
+		TRoom,
+		| "destination"
+		| "bedRooms"
+		| "beds"
+		| "isCoupleBed"
+		| "bathRooms"
+		| "isPrivateBathrooms"
+	>
 > & {
 	minPrice?: number
 	maxPrice?: number
