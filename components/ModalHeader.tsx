@@ -1,9 +1,11 @@
-import { useState } from "react"
-import { View, TouchableOpacity, Text } from "react-native"
 import Colors from "@/constants/Colors"
+import { Text, TouchableOpacity, View } from "react-native"
 
-const ModalHeader = () => {
-	const [active, setActive] = useState(0)
+type TProps = {
+	title: string
+}
+
+const ModalHeader = ({ title }: TProps) => {
 	return (
 		<View
 			style={{
@@ -11,30 +13,18 @@ const ModalHeader = () => {
 				flex: 1,
 				justifyContent: "center",
 				gap: 10,
+				paddingRight: 50,
 			}}
 		>
-			<TouchableOpacity onPress={() => setActive(0)}>
+			<TouchableOpacity>
 				<Text
 					style={{
 						fontFamily: "mon-sb",
 						fontSize: 18,
-						color: active == 0 ? "#000" : Colors.grey,
-						textDecorationLine: active == 0 ? "underline" : "none",
+						color: Colors.dark,
 					}}
 				>
-					Stays
-				</Text>
-			</TouchableOpacity>
-			<TouchableOpacity onPress={() => setActive(1)}>
-				<Text
-					style={{
-						fontFamily: "mon-sb",
-						fontSize: 18,
-						color: active == 1 ? "#000" : Colors.grey,
-						textDecorationLine: active == 1 ? "underline" : "none",
-					}}
-				>
-					Experiences
+					{title}
 				</Text>
 			</TouchableOpacity>
 		</View>

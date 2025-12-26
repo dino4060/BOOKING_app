@@ -14,26 +14,40 @@ import { Alert, StyleSheet, View } from "react-native"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 
 const HomePage = () => {
+	const {
+		homeStayList,
+		updateHomestayList,
+		homeStayParam,
+		updateHomestayParam,
+	} = useHomestayStore()
 	const [destination, setDestination] =
 		useState<TDestination>(DestinationList[1])
-	const { homeStayList, updateHomestayList } =
-		useHomestayStore()
 
 	useEffect(() => {
+		const listRooms = async (roomParam?: TRoomParam) => {
+			const res = (await RoomAPI.listRooms(roomParam)) || []
+			if (res.success === false) {
+				console.error("API error: ", res.message)
+				Alert.alert("Có lỗi", res.message)
+				return
+			}
+			updateHomestayList(res.data)
+		}
+
+		console.info(homeStayParam)
+
 		listRooms({
+			// destination: destination.name,
+			...homeStayParam,
+		})
+	}, [homeStayParam])
+
+	useEffect(() => {
+		updateHomestayParam({
+			...homeStayParam,
 			destination: destination.name,
 		})
 	}, [destination])
-
-	const listRooms = async (roomParam?: TRoomParam) => {
-		const res = (await RoomAPI.listRooms(roomParam)) || []
-		if (res.success === false) {
-			console.error("API error: ", res.message)
-			Alert.alert("Có lỗi", res.message)
-			return
-		}
-		updateHomestayList(res.data)
-	}
 
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>

@@ -37,7 +37,12 @@ export type TRoomShort = Omit<
 	"bookedDates" | "amenities"
 >
 
-export type TRoomParam = Partial<Pick<TRoom, "destination">>
+export type TRoomParam = Partial<
+	Pick<TRoom, "destination">
+> & {
+	minPrice?: number
+	maxPrice?: number
+}
 
 export type TDestination = {
 	name: string

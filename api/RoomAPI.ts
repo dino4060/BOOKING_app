@@ -10,8 +10,9 @@ export const RoomAPI = {
 				"/api/public/rooms",
 				{
 					params: {
-						"non-page": true,
 						destination: param?.destination,
+						"min-price": param?.minPrice,
+						"max-price": param?.maxPrice,
 					},
 				}
 			)

@@ -285,18 +285,9 @@ function RootLayoutNav() {
 					presentation: "transparentModal",
 					animation: "fade",
 					headerTransparent: true,
-					headerTitle: () => <ModalHeader />,
-					// headerLeft: () => {
-					// 	return (
-					// 		<TouchableOpacity
-					// 			onPress={() => {
-					// 				router.back()
-					// 			}}
-					// 		>
-					// 			<Ionicons name='close-outline' size={28} />
-					// 		</TouchableOpacity>
-					// 	)
-					// },
+					headerTitle: () => (
+						<ModalHeader title='Tìm kiếm nơi lưu trú' />
+					),
 				}}
 			/>
 		</Stack>
