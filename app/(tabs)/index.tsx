@@ -37,7 +37,6 @@ const HomePage = () => {
 		console.info("homeStayParam", homeStayParam)
 
 		listRooms({
-			// destination: destination.name,
 			...homeStayParam,
 		})
 	}, [homeStayParam])

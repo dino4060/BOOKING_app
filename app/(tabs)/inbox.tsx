@@ -8,7 +8,12 @@ import { defaultStyles } from "@/constants/Style"
 // } from "firebase/firestore"
 
 import { useUserStore } from "@/store/useUserStore"
-import { Link, Stack, useFocusEffect } from "expo-router"
+import {
+	Link,
+	router,
+	Stack,
+	useFocusEffect,
+} from "expo-router"
 import { useCallback, useState } from "react"
 import {
 	FlatList,
@@ -16,7 +21,7 @@ import {
 	StyleSheet,
 	Text,
 	TouchableOpacity,
-	View
+	View,
 } from "react-native"
 import Animated, {
 	FadeInRight,
@@ -82,8 +87,11 @@ const Inbox = () => {
 
 	useFocusEffect(
 		useCallback(() => {
+			if (user.isLogin === false) {
+				router.push("/login")
+			}
 			getData()
-		}, [])
+		}, [user])
 	)
 
 	return (

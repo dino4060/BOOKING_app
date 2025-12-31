@@ -26,6 +26,7 @@ import { BookingAPI } from "@/api/BookingAPI"
 import { RoomAPI } from "@/api/RoomAPI"
 import { TRoom } from "@/interface/RoomType"
 import { getValueSecureStore } from "@/store/SecureStore"
+import { useUserStore } from "@/store/useUserStore"
 import { formatPriceVND } from "@/utils/number.util"
 import { UtilFunction } from "@/utils/utilFunction"
 import { Calendar } from "react-native-calendars"
@@ -35,6 +36,7 @@ const AnimatedTouchableOpacity =
 	Animated.createAnimatedComponent(TouchableOpacity)
 
 const DetailPage = () => {
+	const { user } = useUserStore()
 	const { id } = useLocalSearchParams()
 	const [openCard, setOpenCard] = useState(1)
 	const router = useRouter()
@@ -55,15 +57,18 @@ const DetailPage = () => {
 	})
 
 	useEffect(() => {
+		if (user.isLogin === false) {
+			router.push("/login")
+		}
+
 		const getRoom = async (id: number) => {
 			const res = await RoomAPI.getRoom(id)
 			if (res.success == false) return
 			setHomeStay(res.data || ({} as TRoom))
 			setBookedDates(res.data.bookedDates)
 		}
-
 		getRoom(Number(id))
-	}, [])
+	}, [user])
 
 	useEffect(() => {
 		if (

@@ -2,17 +2,23 @@ import { TripAPI } from "@/api/TripAPI"
 import TripsContent from "@/components/TripsContent"
 import { TTrip } from "@/interface/TripType"
 import { getValueSecureStore } from "@/store/SecureStore"
-import { Stack } from "expo-router"
+import { useUserStore } from "@/store/useUserStore"
+import { router, Stack } from "expo-router"
 import React, { useEffect, useState } from "react"
 import { View } from "react-native"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 const Trips = () => {
+	const user = useUserStore((state) => state.user)
 	const [trips, setTrips] = useState<TTrip[]>([])
 	const [syncList, setSyncList] = useState<boolean>(false)
 
 	useEffect(() => {
+		if (user.isLogin === false) {
+			router.push("/login")
+		}
+
 		const getTripsByUserId = async () => {
 			const token: any = await getValueSecureStore("token")
 
@@ -32,7 +38,7 @@ const Trips = () => {
 		}
 
 		getTripsByUserId()
-	}, [syncList])
+	}, [user, syncList])
 
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
