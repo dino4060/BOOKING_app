@@ -12,6 +12,18 @@ export const formatPriceVND = (
 	return formatted.replace(/\s₫/, "").replace(/^/, "₫")
 }
 
+const formatDateVN = (
+	dateStr: string | undefined // format YYYY/MM/DD
+) => {
+	if (!dateStr) return ""
+	// Convert to DD/MM/YYYY
+	const parts = dateStr.split("/")
+	if (parts.length === 3) {
+		return `${parts[2]}/${parts[1]}/${parts[0]}`
+	}
+	return dateStr
+}
+
 export const formatExperienceInfo = (
 	dateString: Date | null | undefined
 ) => {

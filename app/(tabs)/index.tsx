@@ -34,7 +34,7 @@ const HomePage = () => {
 			updateHomestayList(res.data)
 		}
 
-		console.info(homeStayParam)
+		console.info("homeStayParam", homeStayParam)
 
 		listRooms({
 			// destination: destination.name,

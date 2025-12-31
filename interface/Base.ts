@@ -28,3 +28,6 @@ export type TPageData<T> = {
 }
 
 export type TSetState<T> = (value: T | ((prev: T) => T)) => void;
+
+export type TStringAble = string | undefined;
+export type TNumberAble = number | undefined;

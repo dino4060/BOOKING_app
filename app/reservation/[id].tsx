@@ -155,11 +155,11 @@ const DetailPage = () => {
 		)
 
 		if (result.success === false) {
-			console.error("API Error: ", result.message)
+			console.error("API error: ", result.message)
 			return
 		}
 
-		console.info("API data: ", result.data)
+		console.info("API booking data: ", result.data)
 
 		const message = "Chúc mừng bạn đã đặt phòng thành công"
 

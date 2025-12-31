@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons"
 import { TouchableOpacity } from "@gorhom/bottom-sheet"
 import { BlurView } from "expo-blur"
 import { useRouter } from "expo-router"
+import moment from "moment"
 import { Fragment, useEffect, useState } from "react"
 import {
 	StyleSheet,
@@ -14,8 +15,8 @@ import {
 	TextInput,
 	View,
 } from "react-native"
+import CalendarPicker from "react-native-calendar-picker"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
-import DatePicker from "react-native-modern-datepicker"
 import Animated, {
 	SlideInDown,
 } from "react-native-reanimated"
@@ -33,6 +34,14 @@ const Page = () => {
 	const today = new Date().toISOString().substring(0, 10)
 	const { homeStayParam, updateHomestayParam } =
 		useHomestayStore()
+
+	// TIME
+	const [startDate, setStartDate] = useState<
+		string | undefined
+	>(undefined)
+	const [endDate, setEndDate] = useState<
+		string | undefined
+	>(undefined)
 
 	// PRICE
 	const [minPrice, setMinPrice] = useState<
@@ -65,6 +74,9 @@ const Page = () => {
 		useState<string>("Đà Lạt")
 
 	useEffect(() => {
+		setStartDate(homeStayParam.startDate || undefined)
+		setEndDate(homeStayParam.endDate || undefined)
+
 		setMinPrice(homeStayParam.minPrice || undefined)
 		setMaxPrice(homeStayParam.maxPrice || undefined)
 
@@ -79,6 +91,9 @@ const Page = () => {
 
 	const onClearAll = () => {
 		setOpenCard("TIME")
+
+		setStartDate(undefined)
+		setEndDate(undefined)
 
 		setMinPrice(undefined)
 		setMaxPrice(undefined)
@@ -96,6 +111,9 @@ const Page = () => {
 		updateHomestayParam({
 			destination,
 
+			startDate,
+			endDate,
+
 			minPrice,
 			maxPrice,
 
@@ -106,6 +124,31 @@ const Page = () => {
 			isPrivateBathrooms,
 		})
 		router.back()
+	}
+
+	const formatDateDisplay = (
+		dateStr: string | undefined
+	) => {
+		if (!dateStr) return ""
+		// Convert YYYY/MM/DD to DD/MM/YYYY
+		const parts = dateStr.split("/")
+		if (parts.length === 3) {
+			return `${parts[2]}/${parts[1]}/${parts[0]}`
+		}
+		return dateStr
+	}
+
+	const getTimePreview = () => {
+		if (!startDate && !endDate) return "Không giới hạn"
+		if (startDate && endDate) {
+			return `${formatDateDisplay(
+				startDate
+			)} - ${formatDateDisplay(endDate)}`
+		}
+		if (startDate)
+			return `Từ ${formatDateDisplay(startDate)}`
+		if (endDate) return `Đến ${formatDateDisplay(endDate)}`
+		return "Không giới hạn"
 	}
 
 	const getSpecificationPreview = () => {
@@ -145,6 +188,22 @@ const Page = () => {
 		setNum(num - 1)
 	}
 
+	const onDateChange = (
+		date: any,
+		type: "START_DATE" | "END_DATE"
+	) => {
+		if (type === "END_DATE") {
+			setEndDate(
+				date ? moment(date).format("YYYY-MM-DD") : undefined
+			)
+		} else {
+			setStartDate(
+				date ? moment(date).format("YYYY-MM-DD") : undefined
+			)
+			setEndDate(undefined) // Reset end date when a new start date is picked
+		}
+	}
+
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
 			<BlurView
@@ -163,7 +222,9 @@ const Page = () => {
 							<Text style={styles.previewText}>
 								Thời gian
 							</Text>
-							<Text style={styles.previewData}>Tất cả</Text>
+							<Text style={styles.previewData}>
+								{getTimePreview()}
+							</Text>
 						</TouchableOpacity>
 					)}
 
@@ -174,26 +235,101 @@ const Page = () => {
 							</Text>
 
 							<Animated.View style={styles.cardBody}>
-								<DatePicker
-									isGregorian={true}
-									options={{
-										defaultFont: "mon",
-										headerFont: "mon-sb",
-										borderColor: "transparent",
-										mainColor: Colors.primary,
+								{/* Date Range Display */}
+								<View style={timeStyles.dateRangeContainer}>
+									<View style={timeStyles.dateBox}>
+										<Text style={timeStyles.dateLabel}>
+											Ngày bắt đầu
+										</Text>
+										<Text style={timeStyles.dateValue}>
+											{startDate
+												? formatDateDisplay(startDate)
+												: "Chọn ngày"}
+										</Text>
+									</View>
+									<Ionicons
+										name='arrow-forward'
+										size={20}
+										color={Colors.grey}
+										style={{ marginHorizontal: 10 }}
+									/>
+									<View style={timeStyles.dateBox}>
+										<Text style={timeStyles.dateLabel}>
+											Ngày kết thúc
+										</Text>
+										<Text style={timeStyles.dateValue}>
+											{endDate
+												? formatDateDisplay(endDate)
+												: "Chọn ngày"}
+										</Text>
+									</View>
+								</View>
+
+								{/* Calendar */}
+								<CalendarPicker
+									allowRangeSelection={true}
+									minDate={new Date()}
+									todayBackgroundColor={Colors.primary}
+									selectedDayColor={Colors.primary}
+									selectedDayTextColor='#FFFFFF'
+									selectedRangeStyle={{
+										backgroundColor: `${Colors.primary}`,
 									}}
-									current={today}
-									selected={today}
-									mode={"calendar"}
-									onSelectedChange={(date: string) =>
-										console.log(date)
+									onDateChange={onDateChange}
+									width={350}
+									months={[
+										"Tháng 1",
+										"Tháng 2",
+										"Tháng 3",
+										"Tháng 4",
+										"Tháng 5",
+										"Tháng 6",
+										"Tháng 7",
+										"Tháng 8",
+										"Tháng 9",
+										"Tháng 10",
+										"Tháng 11",
+										"Tháng 12",
+									]}
+									weekdays={[
+										"CN",
+										"T2",
+										"T3",
+										"T4",
+										"T5",
+										"T6",
+										"T7",
+									]}
+									previousTitle='Trước'
+									nextTitle='Sau'
+									textStyle={{
+										fontFamily: "mon",
+										color: "#000",
+									}}
+									selectedStartDate={
+										startDate
+											? new Date(startDate)
+											: undefined
 									}
-									onMonthYearChange={(date: string) => {
-										console.log(date)
-									}}
-									// @ts-ignore
-									// configs={VNConfigDatetimePicker}
+									selectedEndDate={
+										endDate ? new Date(endDate) : undefined
+									}
 								/>
+
+								{/* Clear Button */}
+								{(startDate || endDate) && (
+									<TouchableOpacity
+										style={timeStyles.clearBtn}
+										onPress={() => {
+											setStartDate(undefined)
+											setEndDate(undefined)
+										}}
+									>
+										<Text style={timeStyles.clearBtnText}>
+											Xóa ngày đã chọn
+										</Text>
+									</TouchableOpacity>
+								)}
 							</Animated.View>
 						</Fragment>
 					)}
@@ -940,5 +1076,47 @@ const specStyles = StyleSheet.create({
 	},
 	toggleBtnTextActive: {
 		color: "#fff",
+	},
+})
+
+const timeStyles = StyleSheet.create({
+	dateRangeContainer: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		marginBottom: 20,
+	},
+	dateBox: {
+		flex: 1,
+		backgroundColor: "#F9FAFB",
+		padding: 12,
+		borderRadius: 12,
+		borderWidth: 1,
+		borderColor: "#E5E7EB",
+	},
+	dateLabel: {
+		fontSize: 12,
+		color: Colors.grey,
+		fontFamily: "mon",
+		marginBottom: 4,
+	},
+	dateValue: {
+		fontSize: 16,
+		fontWeight: "600",
+		color: "#374151",
+		fontFamily: "mon-sb",
+	},
+	clearBtn: {
+		marginTop: 16,
+		padding: 12,
+		backgroundColor: "#FEE2E2",
+		borderRadius: 8,
+		alignItems: "center",
+	},
+	clearBtnText: {
+		color: Colors.red,
+		fontSize: 14,
+		fontWeight: "600",
+		fontFamily: "mon-sb",
 	},
 })

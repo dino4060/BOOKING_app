@@ -11,8 +11,10 @@ export const RoomAPI = {
 				{
 					params: {
 						destination: param?.destination || undefined,
+
 						"min-price": param?.minPrice || undefined,
 						"max-price": param?.maxPrice || undefined,
+
 						bedrooms: param?.bedRooms || undefined,
 						beds: param?.beds || undefined,
 						"is-couple-bed":
@@ -20,6 +22,9 @@ export const RoomAPI = {
 						bathrooms: param?.bathRooms || undefined,
 						"is-private-bathrooms":
 							param?.isPrivateBathrooms ?? undefined,
+
+						"start-date": param?.startDate || undefined,
+						"end-date": param?.endDate || undefined,
 					},
 				}
 			)

@@ -6,4 +6,6 @@ export default {
 	slate: "#1e293b",
 	light: "white",
 	white: "#FFFFFF",
+	red: "#DC2626",
+	lightRed: "#FEE2E2",
 }

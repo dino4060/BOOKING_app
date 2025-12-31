@@ -50,6 +50,8 @@ export type TRoomParam = Partial<
 > & {
 	minPrice?: number
 	maxPrice?: number
+	startDate?: string // Format: YYYY-MM-DD
+	endDate?: string // Format: YYYY-MM-DD
 }
 
 export type TDestination = {
