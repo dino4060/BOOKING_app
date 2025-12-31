@@ -134,6 +134,7 @@ const ListingMap = ({ listings, destination }: Props) => {
 					)
 				})}
 			</MapView>
+
 			{/* <View style={styles.searchBox}>
         <Ionicons name="location-outline" color="#27272a" size={25} />
         <TextInput

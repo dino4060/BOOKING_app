@@ -5,6 +5,7 @@ import Colors from "@/constants/Colors"
 import { defaultStyles } from "@/constants/Style"
 import { TRoom } from "@/interface/RoomType"
 import { getValueSecureStore } from "@/store/SecureStore"
+import { useUserStore } from "@/store/useUserStore"
 import {
 	formatExperienceInfo,
 	formatPriceVND,
@@ -48,6 +49,7 @@ const DetailsPage = () => {
 	const navigation = useNavigation()
 	const scrollRef = useAnimatedRef<Animated.ScrollView>()
 	const [isLikedRoom, setIsLikedRoom] = useState<boolean>()
+	const { user } = useUserStore()
 
 	useEffect(() => {
 		const getRoom = async (id: number) => {
@@ -59,6 +61,11 @@ const DetailsPage = () => {
 			}
 			setHomeStay(res.data)
 		}
+		getRoom(Number(roomId))
+
+		if (user.isLogin === false) {
+			return
+		}
 
 		const hasLikeRoom = async (roomId: number) => {
 			const res = await WishlistAPI.hasLikeRoom(roomId)
@@ -69,8 +76,6 @@ const DetailsPage = () => {
 			}
 			setIsLikedRoom(res.data)
 		}
-
-		getRoom(Number(roomId))
 		hasLikeRoom(Number(roomId))
 	}, [])
 
