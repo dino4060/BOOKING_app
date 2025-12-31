@@ -3,6 +3,10 @@ import { defaultStyles } from "@/constants/Style"
 import { useWarmUpBrowser } from "@/hooks/useWarnUpBrowser"
 import { saveValueSecureStore } from "@/store/SecureStore"
 import { useUserStore } from "@/store/useUserStore"
+import {
+	isValidEmail,
+	isValidPhoneNumber,
+} from "@/utils/validation"
 // import { useOAuth } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router"
 import React, { useState } from "react"
@@ -86,16 +90,6 @@ const Signup = () => {
 
 		setErrors(updatedErrors)
 		return isValid
-	}
-
-	const isValidEmail = (email: string) => {
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-		return emailRegex.test(email)
-	}
-
-	const isValidPhoneNumber = (phoneNumber: string) => {
-		const phoneRegex = /^\d{10}$/
-		return phoneRegex.test(phoneNumber)
 	}
 
 	const handleSignUp = async () => {

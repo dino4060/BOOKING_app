@@ -178,7 +178,7 @@ const Login = () => {
 				<Text style={defaultStyles.btnText}>Login</Text>
 			</TouchableOpacity>
 
-			<TouchableOpacity
+			{/* <TouchableOpacity
 				onPress={() => {
 					router.push("/(modals)/inputEmail")
 				}}
@@ -190,7 +190,7 @@ const Login = () => {
 				<Text style={defaultStyles.btnText}>
 					Forget password?
 				</Text>
-			</TouchableOpacity>
+			</TouchableOpacity> */}
 
 			<View style={style.seperatorView}>
 				<View
@@ -231,12 +231,11 @@ const Login = () => {
 				</TouchableOpacity>
 			</View>
 
-			<View style={style.seperatorView}>
+			{/* <View style={style.seperatorView}>
 				<View
 					style={{
 						borderBottomColor: "#000",
 						flex: 1,
-
 						borderBottomWidth: StyleSheet.hairlineWidth,
 					}}
 				></View>
@@ -300,7 +299,7 @@ const Login = () => {
 						color='#3b82f6'
 					/>
 				</TouchableOpacity>
-			</View>
+			</View> */}
 		</View>
 	)
 }

@@ -1,6 +1,42 @@
+import { InternetException } from "@/assets/data/default"
+import {
+	TApiResFail,
+	TApiResSuccess,
+} from "@/interface/Base"
+import { getValueSecureStore } from "@/store/SecureStore"
 import { axiosClient } from "./AxiosClient"
 
 export const UserAPI = {
+	update: async (
+		name: string,
+		email: string,
+		phone: string
+	) => {
+		const token = await getValueSecureStore("token")
+
+		try {
+			const response = await axiosClient.put(
+				`/api/users`,
+				{
+					name,
+					email,
+					phone,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			)
+			return response.data as TApiResSuccess<boolean>
+		} catch (error: any) {
+			if (error.response) {
+				return error.response.data as TApiResFail
+			}
+			return InternetException
+		}
+	},
 	login: async (email: string, password: string) => {
 		try {
 			const response = await axiosClient.post(
@@ -18,7 +54,7 @@ export const UserAPI = {
 				}
 			)
 			return response
-		} catch (error) { }
+		} catch (error) {}
 	},
 	register: async (
 		email: string,
@@ -79,30 +115,46 @@ export const UserAPI = {
 		return response.data
 	},
 
-	updateUser: async (uri: string, token: string, id: string) => {
-		const formData = new FormData();
-		formData.append('file', { uri: uri, name: 'photo.jpg', type: 'image/jpeg' } as any);
-		formData.append('id', id);
+	updateUser: async (
+		uri: string,
+		token: string,
+		id: string
+	) => {
+		const formData = new FormData()
+		formData.append("file", {
+			uri: uri,
+			name: "photo.jpg",
+			type: "image/jpeg",
+		} as any)
+		formData.append("id", id)
 		try {
-			const response = await axiosClient.post('/user/update', formData, {
-				headers: {
-					"Content-Type": "multipart/form-data",
-					Authorization: `Bearer ${token}`,
-				},
-			});
-			console.log('Image upload response:', response.data);
-			return response.data;
+			const response = await axiosClient.post(
+				"/user/update",
+				formData,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			)
+			console.log("Image upload response:", response.data)
+			return response.data
 		} catch (error) {
-			console.error('Image upload error:', error);
+			console.error("Image upload error:", error)
 		}
 	},
 
-	updateName: async (name: string, token: string, id: string) => {
+	updateName: async (
+		name: string,
+		token: string,
+		id: string
+	) => {
 		const response = await axiosClient.post(
 			"/user/updateName",
 			{
 				name,
-				id
+				id,
 			},
 			{
 				headers: {
@@ -113,5 +165,5 @@ export const UserAPI = {
 			}
 		)
 		return response.data
-	}
+	},
 }
