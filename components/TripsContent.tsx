@@ -116,14 +116,18 @@ const TripsContent = ({ trips, setSyncList }: Props) => {
 						<Text
 							style={{ fontFamily: "mon", fontSize: 16 }}
 						>
-							{formatDate(item.startDate)}{" "}
+							{formatDate(item.startDate)}
+						</Text>
+						<Text
+							style={{ fontFamily: "mon", fontSize: 16 }}
+						>
 							{formatDate(item.endDate)}
 						</Text>
 					</Animated.View>
 
 					<Animated.View
 						style={{
-							flex: 8,
+							flex: 7,
 							paddingTop: 3,
 							paddingLeft: 20,
 							paddingRight: 10,
