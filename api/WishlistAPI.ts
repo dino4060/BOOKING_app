@@ -115,7 +115,7 @@ export const WishlistAPI = {
 				{
 					params: {
 						"non-page": true,
-						destination: param?.destination || "Đà Lạt",
+						destination: param?.destination || undefined,
 					},
 					headers: {
 						"Content-Type": "application/json",

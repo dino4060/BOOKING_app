@@ -2,6 +2,7 @@ import { WishlistAPI } from "@/api/WishlistAPI"
 import { HostAvatarUrl } from "@/assets/data/default"
 import Colors from "@/constants/Colors"
 import { TDestination, TRoom } from "@/interface/RoomType"
+import { useHomestayStore } from "@/store/useHomestayStore"
 import { useUserStore } from "@/store/useUserStore"
 import { formatPriceVND } from "@/utils/number.util"
 import { Ionicons } from "@expo/vector-icons"
@@ -45,6 +46,8 @@ const ListingContent = ({
 		Set<number>
 	>(new Set())
 	const isProcessLoveButton = useRef(false)
+	const { homeStayParam } = useHomestayStore()
+
 	const addLikedRoomIdSet = (roomId: number) => {
 		setLikedRoomIdSet((prev) => {
 			const next = new Set(prev)
@@ -76,7 +79,9 @@ const ListingContent = ({
 			}
 
 			const listLikedRoomIds = async () => {
-				const res = await WishlistAPI.listRooms()
+				const res = await WishlistAPI.listRooms({
+					destination: homeStayParam.destination,
+				})
 				if (res.success === false) {
 					console.error("API error: ", res.message)
 					Alert.alert("Có lỗi", res.message)
@@ -89,7 +94,7 @@ const ListingContent = ({
 				)
 			}
 			listLikedRoomIds()
-		}, [user])
+		}, [user, homeStayParam])
 	)
 
 	const handleClickLoveButton = async (
